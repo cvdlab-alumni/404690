@@ -9,12 +9,12 @@ var mapping = function (p) {
 	return [u, 1];
 };
 
-var bisect = function (p) {
+var bisection = function (p) {
 	var u = p[0];
 
 	return [u, u];
 };
 
 var mapped = MAP(mapping)(domain1d);
-var bisettrice = MAP(bisect)(domain1d);
+var bisect = MAP(bisection)(domain1d);
 

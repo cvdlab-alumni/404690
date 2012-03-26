@@ -9,12 +9,49 @@ var mapping = function (p) {
 	return [u, 1];
 };
 
+
+
+var mapped = MAP(mapping)(domain1d);
+
+//DRAW THE BISECT
+var bisectDomain = DOMAIN([[0,10]])(10);
+
 var bisection = function (p) {
 	var u = p[0];
 
 	return [u, u];
 };
 
-var mapped = MAP(mapping)(domain1d);
 var bisect = MAP(bisection)(domain1d);
+DRAW(bisect);
+
+//DRAW A SINE
+var sineDomain = DOMAIN([[0,2*PI]])([36]);
+
+var sin = function (p) {
+	var u = p[0];
+
+	return [u, Math.sin(u)];
+};
+
+var sine = MAP(sin)(sineDomain); 
+DRAW(sine);
+
+
+/**
+ * drawCircle
+ * draw a circle in plasm.js
+ * 
+ */
+
+ var drawCircle = function (r, n) {
+ 	var domain = DOMAIN([[0,2*r*PI]])([n]);
+ 	var circle = MAP(function (p) {
+ 		var u = p[0];
+
+ 		return [Math.cos(u), Math.sin(u)];
+ 	});
+
+ 	DRAW(circle);
+ }
 

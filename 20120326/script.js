@@ -55,13 +55,19 @@ DRAW(sine);
  	DRAW(circle);
  }
 
+ /**
+  *drawCilinder
+  *
+  *draw a cilinder in plasm.js
+  */
+
  var drawCilinder = function (r, h, n, m, color) {
  	var domain = DOMAIN([[0, 2*PI],[0,h]])([n,m]);
  	var cilinder = MAP(function (p) {
  		var u = p[0];
  		var v = p[1];
 
- 		return [v, r*Mat.cos(u), r*Mat.sin(u)];
+ 		return [v, r*Math.cos(u), r*Math.sin(u)];
 
  	})(domain);
 

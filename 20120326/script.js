@@ -45,12 +45,12 @@ DRAW(sine);
  */
 
  var drawCircle = function (r, n) {
- 	var domain = DOMAIN([[0,2*r*PI]])([n]);
+ 	var domain = DOMAIN([[0,2*PI]])([n]);
  	var circle = MAP(function (p) {
  		var u = p[0];
 
- 		return [Math.cos(u), Math.sin(u)];
- 	});
+ 		return [r*Math.cos(u), r*Math.sin(u)];
+ 	})(domain);
 
  	DRAW(circle);
  }

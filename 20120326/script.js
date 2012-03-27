@@ -13,38 +13,58 @@ var mapping = function (p) {
 
 var mapped = MAP(mapping)(domain1d);
 
-//DRAW THE BISECT
-var bisectDomain = DOMAIN([[0,10]])(10);
-
-var bisection = function (p) {
-	var u = p[0];
-
-	return [u, u];
-};
-
-var bisect = MAP(bisection)(domain1d);
-DRAW(bisect);
-
-//DRAW A SINE
-var sineDomain = DOMAIN([[0,2*PI]])([36]);
-
-var sin = function (p) {
-	var u = p[0];
-
-	return [u, Math.sin(u)];
-};
-
-var sine = MAP(sin)(sineDomain); 
-DRAW(sine);
 
 
 /**
- * drawCircle
- * draw a circle in plasm.js
- * 
+ * drawBisect
+ * draw a Bisection in plasm.js
+ *
+ * @param {Array} color the rgb color of the sine
  */
 
- var drawCircle = function (r, n) {
+ var drawBisect = function (color) {
+ 	var domain = DOMAIN([[0,10]])(10);
+ 	var bisect = MAP(function (p) {
+ 		var u = p[0];
+
+ 		return [u, u];
+ 	})(domain);	
+
+ 	COLOR(color)(bisect);
+ 	DRAW(bisect);
+ };
+
+ /**
+ * drawSine
+ * draw a Sine in plasm.js
+ *
+ * @param {Integer} n number of segment in the radius interval
+ * @param {Array} color the rgb color of the sine
+ */
+
+ var drawSine = function (n, color) {
+ 	var domain = DOMAIN([[0,2*PI]])(n);
+ 	var sine = MAP(function (p) {
+ 		var u = p[0];
+
+ 		return [u, Math.sin(u)];
+ 	})(domain);	
+
+ 	COLOR(color)(sine);
+ 	DRAW(sine);
+ };
+
+
+ /**
+ * drawCircle
+ * draw a Circle in plasm.js
+ *
+ * @param {Integer} r radius
+ * @param {Integer} n number of segment in the radius interval
+ * @param {Array} color the rgb color of the circle
+ */
+
+ var drawCircle = function (r, n, color) {
  	var domain = DOMAIN([[0,2*PI]])([n]);
  	var circle = MAP(function (p) {
  		var u = p[0];
@@ -52,14 +72,20 @@ DRAW(sine);
  		return [r*Math.cos(u), r*Math.sin(u)];
  	})(domain);
 
+ 	COLOR(color)(circle);
  	DRAW(circle);
  }
 
  /**
-  *drawCilinder
-  *
-  *draw a cilinder in plasm.js
-  */
+ * drawCilinder
+ * draw a Cilinder in plasm.js
+ *
+ * @param {Integer} r radius
+ * @param {Integer} h height
+ * @param {Integer} n number of segment in the radius interval
+ * @param {Integer} m number of segment in the height interval
+ * @param {Array} color the rgb color of the cilinder
+ */
 
  var drawCilinder = function (r, h, n, m, color) {
  	var domain = DOMAIN([[0, 2*PI],[0,h]])([n,m]);
@@ -76,17 +102,25 @@ DRAW(sine);
  };
 
 
+/**
+ * drawSphere
+ * draw a Sphere in plasm.js
+ *
+ * @param {Integer} r radius
+ * @param {Integer} n number of segment in the intervals
+ * @param {Array} color the rgb color of the sphere
+ */
 
+var drawSphere = function (r, n, color) {
+	var domain = DOMAIN([[0,PI],[0,2*PI]])([n/2,n]);
+	var sphere = MAP(function (p) {
+		var u = p[0]-PI/2;
+		var v = p[1] -PI;
 
+		return [-r*Math.cos(u)*Math.sin(v), r*Math.cos(u)*Math.cos(v), r*Math.sin(u)];
+	})(domain);
 
-
-
-
-
-
-
-
-
-
-
+	COLOR(color)(sphere);
+	DRAW(sphere);
+}
 

@@ -126,9 +126,9 @@ var windowed_wall = STRUCT([
 	vert_wall(30.95,7.45,0.55+5+0.7,0.05),
 	vert_wall(32,7.45,0.55+5+0.7,0.05),
 
-	vert_line(31.1,7.6,5.8),
-	vert_line(31.5,7.6,5.8),
-	vert_line(31.9,7.6,5.8)
+//	vert_line(31.1,7.6,5.8),
+//	vert_line(31.5,7.6,5.8),
+//	vert_line(31.9,7.6,5.8)
 
 ]);
 
@@ -144,8 +144,8 @@ var bathroom_walls = STRUCT([
 
 	horiz_wall(5,22, 4+0.05,0.05),
 	vert_wall(9,16.8,5+0.2,0.05),
-	horiz_wall(1,17-0.05,8,0.05)
-
+	horiz_wall(1,17-0.05,6.2,0.05),
+	horiz_wall(8.2,17-0.05,1,0.05)
 ]);
 
 var walls = STRUCT([

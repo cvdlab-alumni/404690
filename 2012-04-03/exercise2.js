@@ -18,6 +18,9 @@ var floor_F = tiled_plan(39,5,8,11);
 var floor_G = tiled_plan(21,5,18,12);
 var floor_H = tiled_plan(1,10,20,7);
 
+var bathroom = tiled_plan(1,17,8,5);
+
+
 var floor = STRUCT([
 	floor_A,
 	floor_B,
@@ -26,10 +29,10 @@ var floor = STRUCT([
 	floor_E,
 	floor_F,
 	floor_G,
-	floor_H
+	floor_H,
+	bathroom
 ]);
 
-var bathroom = tiled_plan(1,17,8,5);
 
 
 var _bench = function (x,y, n_inner, width_inner, width_outer, height, thick) {
@@ -93,6 +96,64 @@ var vert_wall = function (x,y,lenght, thick, height) {
 			[lenght],
 			[height+0.5]
 	]));
+}
+
+var vert_windowed_wall = function (x,y,lenght, n, tall) {
+	var vert_border = SIMPLEX_GRID([
+		[0.05],
+		[0.025, -(lenght/n -0.05), 0.025],
+		[tall]
+	]);
+	var horiz_border = SIMPLEX_GRID([
+		[0.05],
+		[lenght/n],
+		[0.05, -(tall-0.1), 0.05]
+	])
+	var border = STRUCT([
+		vert_border,
+		horiz_border
+	]);
+
+	var glass = T([0])([0.025])(
+		SIMPLEX_GRID([
+			[0.01],
+			[lenght],
+			[tall]
+		]));
+
+
+	var borders =  STRUCT(REPLICA(n)([border, T([1])([lenght/n])]));
+
+	return T([0,1,2])([x,y,0.5])(STRUCT([borders, glass]));
+}
+
+var horiz_windowed_wall = function (x,y,lenght, n, tall) {
+	var vert_border = SIMPLEX_GRID([
+		[0.025, -(lenght/n -0.05), 0.025],
+		[0.05],
+		[tall]
+	]);
+	var horiz_border = SIMPLEX_GRID([
+		[lenght/n],
+		[0.05],
+		[0.05, -(tall-0.1), 0.05]
+	])
+	var border = STRUCT([
+		vert_border,
+		horiz_border
+	]);
+
+	var glass = T([1])([0.025])(
+		SIMPLEX_GRID([
+			[lenght],
+			[0.01],
+			[tall]
+		]));
+
+
+	var borders =  STRUCT(REPLICA(n)([border, T([0])([lenght/n])]));
+
+	return T([0,1,2])([x,y,0.5])(STRUCT([borders, glass]));
 }
 
 var bench_wall = T([0,1,2])([7.5,15,0.5])(
@@ -221,8 +282,18 @@ var inside_wall = STRUCT([
 ]);
 
 var windowed_wall = STRUCT([
-	vert_wall(30.95,7.45,0.55+5+0.7,0.05, 3),
-	vert_wall(32,7.45,0.55+5+0.7,0.05, 3)
+	vert_windowed_wall(30.95,7.45,0.55+5+0.7,1, 3),
+	vert_windowed_wall(32,7.45,0.55+5+0.7,1, 3)
+]);
+
+var walls = STRUCT([
+	pool1_walls,
+	pool2_walls,
+	bathroom_walls,
+	bench_wall,
+	entrance_wall,
+	inside_wall,
+	windowed_wall
 ]);
 
 
@@ -259,6 +330,20 @@ var pillars = STRUCT([
 ]);
 
 
+var stairs = function (x,y) {
+	return	T([0,1])([x,y])(STRUCT(
+		REPLICA(7)([
+			SIMPLEX_GRID([
+				[0.375],
+				[3],
+				[0.125]
+			]),
+			T([0,2])([0.375,-0.125])
+		])
+	));
+}
+
+
 
 var roof = function (x,y, width, height,tall) {
 	var thick_lower = 0.3;
@@ -281,3 +366,15 @@ var roof = function (x,y, width, height,tall) {
 
 var bathroom_roof = roof(0.5,12.2, 9.3, 9.8, 3);
 var main_roof = roof(24,4,23,13, 3);
+
+
+var building = STRUCT([
+	floor,
+	pool1,
+	pool2,
+	bench,
+	walls,
+	pillars,
+	bathroom_roof,
+	main_roof,
+]);

@@ -42,17 +42,17 @@ var vert_stabilizer = COLOR([1,1,0,1])(STRUCT([s0,s1,s2,s3,s4,s5]));
 
 var vp1i = [[0,12,0.5],[6,12,0.5],[1,0,0],[1,0,0]];
 var vp1ii = [[0,12,-0.5],[6,12,-0.5],[1,0,0],[1,0,0]];
-var vp2 = [[0,12,0],[6,0,0],[0,-15,0],[5,0,0]];
 var vp3i = [[6,12,0.5],[10,10,0.5],[4,-2,0],[4,-2,0]];
+var vp2 = [[0,12,0],[6,0,0],[0,-15,0],[5,0,0]];
 var vp3ii = [[6,12,-0.5],[10,10,-0.5],[4,-2,0],[4,-2,0]];
-var vp4 = [[10,10,0],[6,0,0],[0,-10,0],[-5,0,0]];
+var vp4 = [[0,12,0],[0,4,0],[6,0,0],[9,0,0],[10,10,0]];
 
 var vc1i = CUBIC_HERMITE(S0)(vp1i);
 var vc1ii = CUBIC_HERMITE(S0)(vp1ii);
 var vc2 = CUBIC_HERMITE(S0)(vp2);
 var vc3i = CUBIC_HERMITE(S0)(vp3i);
 var vc3ii = CUBIC_HERMITE(S0)(vp3ii);
-var vc4 = CUBIC_HERMITE(S0)(vp4);
+var vc4 = BEZIER(S0)(vp4);
 
 var b0 = BEZIER(S1)([vc1i,vc2]);
 var b1 = BEZIER(S1)([vc1ii,vc2]);

@@ -9,8 +9,8 @@ var Domains = {
     D2: DOMAIN([[0,1],[0,1]])([16,16]),
 
     D3: {
-        LOW: DOMAIN([[0,1],[0,1],[0,1]])([8,1,8]),
-        MID: DOMAIN([[0,1],[0,1],[0,1]])([16,1,16]),
+        LOW: DOMAIN([[0,1],[0,1],[0,1]])([16,1,1]),
+        MID: DOMAIN([[0,1],[0,1],[0,1]])([32,1,1]),
         HIG: DOMAIN([[0,1],[0,1],[0,1]])([32,1,32])
     },
 
@@ -41,8 +41,9 @@ var Z = 2;
 var Utils = {
     sequence: function (o, n, tot_gap, direction) {
         var el = [];
-        for (var i=0; i < n; i++) {
-            el.push(o, T([direction])([tot_gap]));
+        for (var i=0, gap=0; i < n; i+=1, gap+=tot_gap) {
+            // el.push(o, T([direction])([tot_gap]));
+            el.push(T([direction])([gap])(o));
         }
         return STRUCT(el);
    },
@@ -591,74 +592,76 @@ var Roof_Curbe = function () {
 
 };
 
-var PLACEHOLDER = true; //more fast to calculate
+var USE_PLACEHOLDER = false; //more fast to calculate
+var USE_ROOF_LOW_DEFINITION = false;
 
-var Roof_Stakes = function () {
+var Roof_Decorations = function () {
 
-    var half_roof_stakes;
+    var half_roof_decorations;
+    var r_1;
+    var r_2;
+    var r_3;
+    var r_4;
+    var r_5;
 
-    if (!PLACEHOLDER) {
-        var roof_stake_down_in_points = [[0,0,0],[-0.1,0,0.74],[-0.76,0,0.31],[-0.83,0,1]];
-        var roof_stake_down_out_points = [[0,0.43,0],[-0.1,0.43,0.74],[-0.76,0.43,0.31],[-0.83,0.43,1]];
-        var roof_stake_up_in_points = [[0,0,1],[-0.83,0,1]];
-        var roof_stake_up_out_points = [[0,0.43,1],[-0.83,0.43,1]];
+    if (!USE_PLACEHOLDER) {
+        var roof_decoration_down_in_points = [[0,0,0],[-0.1,0,0.74],[-0.76,0,0.31],[-0.83,0,1]];
+        var roof_decoration_down_out_points = [[0,0.43,0],[-0.1,0.43,0.74],[-0.76,0.43,0.31],[-0.83,0.43,1]];
+        var roof_decoration_up_in_points = [[0,0,1],[-0.83,0,1]];
+        var roof_decoration_up_out_points = [[0,0.43,1],[-0.83,0.43,1]];
 
-        var roof_stake_down_in  = BEZIER(S0)(roof_stake_down_in_points);
-        var roof_stake_down_out = BEZIER(S0)(roof_stake_down_out_points);
-        var roof_stake_up_in    = BEZIER(S0)(roof_stake_up_in_points);
-        var roof_stake_up_out   = BEZIER(S0)(roof_stake_up_out_points);
+        var roof_decoration_down_in  = BEZIER(S0)(roof_decoration_down_in_points);
+        var roof_decoration_down_out = BEZIER(S0)(roof_decoration_down_out_points);
+        var roof_decoration_up_in    = BEZIER(S0)(roof_decoration_up_in_points);
+        var roof_decoration_up_out   = BEZIER(S0)(roof_decoration_up_out_points);
 
-        var roof_stake_up   = BEZIER(S1)([roof_stake_up_in, roof_stake_up_out]);
-        var roof_stake_down = BEZIER(S1)([roof_stake_down_in, roof_stake_down_out]);
+        var roof_decoration_up   = BEZIER(S1)([roof_decoration_up_in, roof_decoration_up_out]);
+        var roof_decoration_down = BEZIER(S1)([roof_decoration_down_in, roof_decoration_down_out]);
 
-        var roof_stake = MAP(BEZIER(S2)([roof_stake_up, roof_stake_down]))(Domains.D3.LOW);
+        var roof_decoration;
+        if(USE_ROOF_LOW_DEFINITION) {
+            roof_decoration = MAP(BEZIER(S2)([roof_decoration_up, roof_decoration_down]))(Domains.D3.LOW);
+        } else {
+            roof_decoration = MAP(BEZIER(S2)([roof_decoration_up, roof_decoration_down]))(Domains.D3.MID);
+        }
 
-        var side_roof_stake = R([X,Y])([PI/2])(roof_stake);
-        var back_roof_stake = R([X,Y])([PI])(roof_stake);
+        var side_roof_decoration = R([X,Y])([PI/2])(roof_decoration).translate([X],[0.43]);
+        var back_roof_decoration = R([X,Y])([PI])(roof_decoration);
 
-        var r_1 = Utils.sequence(roof_stake, 10, 0.43+0.65, Y);
-        var r_2 = Utils.sequence(side_roof_stake, 6, 0.43+0.65, X);
-        var r_3 = Utils.sequence(roof_stake, 17, 0.43+0.65, Y);
-        var r_4 = Utils.sequence(side_roof_stake, 40, 0.43+0.65,X);
-        var r_5 = Utils.sequence(back_roof_stake, 27, 0.43+0.65,Y);
+        r_1 = Utils.sequence(roof_decoration, 10, 0.43+0.65, Y);
+        r_2 = Utils.sequence(side_roof_decoration, 5, 0.43+0.65, X);
+        r_3 = Utils.sequence(roof_decoration, 17, 0.43+0.65, Y);
+        r_4 = Utils.sequence(side_roof_decoration, 40, 0.43+0.65,X);
+        r_5 = Utils.sequence(back_roof_decoration, 27, 0.43+0.65,Y);
 
-        half_roof_stakes = STRUCT([
-            r_1,
-            r_2,
-            T([X,Y])([WALL_DEPTH + 4, -20.3 + WALL_DEPTH]),
-            r_3,
-            T([X])([0.43]),
-            r_4,
-            T([X])([39.78 + 2*WALL_DEPTH - 0.43]),
-            r_5
-        ]);
     }
     else {
 
-        var roof_placeholder_stake      = CUBOID([0.83,0.43,1]).translate([X],[-0.83]);
-        var side_roof_placeholder_stake = CUBOID([0.43,0.83,1]).translate([Y],[-0.83]);
-        var back_roof_placeholder_stake = CUBOID([0.83,0.43,1]);
+        var roof_placeholder_decoration      = CUBOID([0.83,0.43,1]).translate([X],[-0.83]);
+        var side_roof_placeholder_decoration = CUBOID([0.43,0.83,1]).translate([Y],[-0.83]);
+        var back_roof_placeholder_decoration = CUBOID([0.83,0.43,1]);
 
 
-        var rp_1 = Utils.sequence(roof_placeholder_stake, 10, 0.43+0.65, Y);
-        var rp_2 = Utils.sequence(side_roof_placeholder_stake, 5, 0.43+0.65, X);
-        var rp_3 = Utils.sequence(roof_placeholder_stake, 17, 0.43+0.65, Y);
-        var rp_4 = Utils.sequence(side_roof_placeholder_stake, 40, 0.43+0.65,X);
-        var rp_5 = Utils.sequence(back_roof_placeholder_stake, 27, 0.43+0.65,Y);
+        r_1 = Utils.sequence(roof_placeholder_stake, 10, 0.43+0.65, Y);
+        r_2 = Utils.sequence(side_roof_placeholder_stake, 5, 0.43+0.65, X);
+        r_3 = Utils.sequence(roof_placeholder_stake, 17, 0.43+0.65, Y);
+        r_4 = Utils.sequence(side_roof_placeholder_stake, 40, 0.43+0.65,X);
+        r_5 = Utils.sequence(back_roof_placeholder_stake, 27, 0.43+0.65,Y);
 
-        half_roof_stakes = STRUCT([
-            rp_1,
-            rp_2,
-            T([X,Y])([WALL_DEPTH + 4, -20.3 + WALL_DEPTH]),
-            rp_3,
-            T([X])([0.43]),
-            rp_4,
-            T([X])([39.78 + 2*WALL_DEPTH - 0.43]),
-            rp_5
-        ]).color(Colors.yellow_decoration);
     }
 
-    return STRUCT([half_roof_stakes, T([Y])([2*(STEP_WIDTH/2 + HANDRAIL_WIDTH + 5.7)]), S([Y])([-1]), half_roof_stakes]);
+    half_roof_decorations = STRUCT([
+        r_1,
+        r_2,
+        T([X,Y])([WALL_DEPTH + 4, -20.3 + WALL_DEPTH]),
+        r_3,
+        // T([X])([0.43]),
+        r_4,
+        T([X])([39.78 + 2*WALL_DEPTH - 0.43]),
+        r_5
+    ]);
+
+    return STRUCT([half_roof_decorations, T([Y])([2*(STEP_WIDTH/2 + HANDRAIL_WIDTH + 5.7)]), S([Y])([-1]), half_roof_decorations]).color(Colors.yellow_decoration);
 };
 
 var UPPER_ROOF_CURBE_DEPTH = WALL_DEPTH+0.83;
@@ -886,8 +889,9 @@ var stairs = Stairs().translate([X,Y],[-N_STEPS * STEP_DEPTH - 2.66 - 5,5.7]).co
 
 
 var villa = STRUCT([
+    Roof_Decorations().translate([Z],[BASEMENT_HEIGHT+3*CURBE_HEIGHT+MIDDLE_WALL_HEIGHT+UPPER_WALL_HEIGHT]),
     Base(),
-    Floor(),
+    Floor(), // that is the basement floor
     stairs,
     Basement(),
     Front_Basement_Grid(),
@@ -904,9 +908,7 @@ var villa = STRUCT([
     Upper_wall(),
     T([Z])([UPPER_WALL_HEIGHT]),
     Roof_Curbe(),
-    T([Z])([CURBE_HEIGHT]),
-    Roof_Stakes(),
-    T([Z])([1]),
+    T([Z])([CURBE_HEIGHT+1]),
     Upper_Roof_Curbe(),
     Floor(), //that is the top
     T([Z])([CURBE_HEIGHT]),
@@ -917,5 +919,5 @@ var villa = STRUCT([
     Chimney().rotate([X,Y],[PI/2]).translate([X,Y],[16,36]),
     T([Z])([6]),
     Chimney().translate([X,Y],[30,15])
-]);
+]).rotate([X,Y],[PI]);
 DRAW(villa);

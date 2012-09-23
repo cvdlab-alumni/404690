@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Final-project-cg-site by vheon</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Final Project CG</h1>
+        <p>Presentation page for the final project of CG</p>
+
+        <p class="view"><a href="https://github.com/vheon/Final-Project-CG-site">View the Project on GitHub <small>cvdlab-cg/404690</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/vheon/Final-Project-CG-site/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <!-- <li><a href="https://github.com/vheon/Final-Project-CG-site/tarball/master">Download <strong>TAR Ball</strong></a></li> -->
+          <li><a href="https://github.com/cvdlab-cg/404690">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>The villa.</h3>
+
+<p>The Villa Forni Cerato is a 16th-century villa in Montecchio Precalcino,
+Province of Vicenza, northern Italy. Its design is attributed to Andrea Palladio
+and his client is assumed to have been Girolamo Forni, a wealthy wood merchant
+who supplied building material for a number of the Palladio's projects. The
+attribution to Palladio is partly on stylistic grounds, although this is a
+complicated issue - the building departs from the Palladian norms.</p>
+
+<p><img src="images/front_view.jpeg" alt="Front view of the villa"></p>
+
+<h5>History</h5>
+
+<p>The villa was probably built in the 1540s modifying an existing building on the
+site. The double name Forni-Cerato, which it is always given, dates back to
+1610.In that year the building, which belonged to Girolamo Forni who can be
+regarded as having commissioned it, passed in accordance with a provision in his
+will into the ownership of Giuseppe, Girolamo and Baldissera Cerato. Both its
+attribution to Palladio and the assumption that Girolamo Forni had it built
+remain a matter of speculation. The first reference to the architect being
+Palladio is in the 18th century (when it was mentioned by the architects
+Francesco Muttoni and Ottavio Bertotti Scamozzi). However, modern research
+agrees almost unanimously with their opinion.</p>
+
+<h3>Villa Decomposition</h3>
+
+<p>Looking at the villa can be seen that it is a highly symmetrical building.
+Moreover the villa seems to be built in layers, so in the work-flow of making
+the model was exactly that: layers.</p>
+
+<p><img src="images/Decomposition.jpeg" alt="Decomposition of the villa"></p>
+
+<p>So the model was build as much as possible only on half and add some pieces
+later when making only half of that part was not the smartest move.</p>
+
+<p><img src="images/half_villa.jpeg" alt="Model of half villa"></p>
+
+<h3>Details</h3>
+
+<p>Some details like the banister's pillar has a well defined smooth form. For
+modelling that form instead of doing it by eye I develop a little browser
+application that let me retrace a Bézier curve in an image moving around the
+geometrical handles and it print the point of all the them. This little
+application was develop using Javascript and the <code>svg</code> tag using 
+<a href="http://www.jquery.com">jQuery</a> and <a href="http://www.raphaeljs.com">Raphaël</a> as 
+support library.</p>
+
+<p>Here we can see the tool in action on the pillar</p>
+<p><img src="images/curve_maker_pillar.jpeg" alt="Use of the tool for the pillar model"></p>
+<p>And here we can see the result</p>
+<p><img src="images/pillar.jpeg" alt="The resulting model"></p>
+
+<p>Here again the tool for the roof decoration</p>
+<p><img src="images/curve_maker_roof_decoration.jpeg" alt="Use of the tool for the roof decoration"></p>
+<p>And here the resulting model</p>
+<p><img src="images/roof_decoration.jpeg" alt="The resulting model"></p>
+
+<p>The application itself was the result of a very quick coding resulting an
+application with no API and not so easy to use from external user, so I decided
+to not publish it.</p>
+
+<h3>Use of low level function</h3>
+
+<p>Taking performance into account, I started looking into the Plasm.js language
+and saw that all function that take a Model as a paramether return a new Model
+with the modification applied. For some function like <code>COLOR</code> I thought it was
+pretty useless, so I use the OO interface underline the functional one and use
+the <code>color</code> method on the model itself. The same approach was used for the
+affine transformation on the Model that I retain useless to clone such the
+stairway: there's only one stairway, why whould I wanna clone it to translate in
+the right spot?</p>
+
+<h4>Performance issue on STRUCT</h4>
+
+<p>Looking into the Plasm.js code I had a better look to the function I was using
+in the project, so either to the STRUCT function. the code is really short</p>
+
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm">* STRUCT</span>
+<span class="cm">* </span>
+<span class="cm">* @param {Array} items</span>
+<span class="cm">* @return {plasm.Model}</span>
+<span class="cm">* @api public</span>
+<span class="cm">*/</span>
+
+<span class="nx">fun</span><span class="p">.</span><span class="nx">STRUCT</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">transformations</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">o</span><span class="p">;};</span>
+<span class="kd">var</span> <span class="nx">objects</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="nx">temp</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="nx">items</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">plasm</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+      <span class="o">!</span><span class="p">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">plasm</span><span class="p">.</span><span class="nx">Struct</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">transformations</span> <span class="o">=</span> <span class="nx">COMP2</span><span class="p">([</span><span class="nx">transformations</span><span class="p">,</span> <span class="nx">item</span><span class="p">]);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// temp.push(APPLY([transformations, item]).clone());</span>
+    <span class="nx">objects</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">APPLY</span><span class="p">([</span><span class="nx">transformations</span><span class="p">,</span> <span class="nx">item</span><span class="p">]));</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="k">return</span> <span class="k">new</span> <span class="nx">plasm</span><span class="p">.</span><span class="nx">Struct</span><span class="p">(</span><span class="nx">objects</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>Studying the code as suggested by <a href="https://github.com/Rayzen" class="user-mention">@Rayzen</a> I commented out the line as showed
+above since it clones all the models and then do nothing with them lowering the
+performance, plus on every Model in the <code>items</code> Array will be applied the
+composition of all the preceding functions; but as mentioned earlier all the
+function return a clone of the model so a composition of N function will clone
+the Model N times. When this is done on few pieces the performance issue is
+not so marked, but when is done on many curved pieces like in my case the
+performance would be an issue. So since my villa was built through layer from
+the ground up to the roof and these little pieces are part of the roof I worked
+around this snag translating these parts through the OO method translate and put
+these part at the begin of the <code>STRUCT</code> so it wasn't clone many times from the
+functions in the struct</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">villa</span> <span class="o">=</span> <span class="nx">STRUCT</span><span class="p">([</span>
+    <span class="nx">Roof_Decorations</span><span class="p">().</span><span class="nx">translate</span><span class="p">([</span><span class="nx">Z</span><span class="p">],[</span><span class="nx">BASEMENT_HEIGHT</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="nx">CURBE_HEIGHT</span><span class="o">+</span><span class="nx">MIDDLE_WALL_HEIGHT</span><span class="o">+</span><span class="nx">UPPER_WALL_HEIGHT</span><span class="p">]),</span>
+    <span class="nx">Base</span><span class="p">(),</span>
+    <span class="nx">Floor</span><span class="p">(),</span> <span class="c1">// that is the basement floor</span>
+    <span class="nx">stairs</span><span class="p">,</span>
+    <span class="nx">Basement</span><span class="p">(),</span>
+    <span class="nx">Front_Basement_Grid</span><span class="p">(),</span>
+    <span class="p">...</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/vheon">vheon</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>

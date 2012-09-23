@@ -603,6 +603,7 @@ var Roof_Decorations = function () {
     var r_3;
     var r_4;
     var r_5;
+    var single_front;
 
     if (!USE_PLACEHOLDER) {
         var roof_decoration_down_in_points = [[0,0,0],[-0.1,0,0.74],[-0.76,0,0.31],[-0.83,0,1]];
@@ -633,6 +634,8 @@ var Roof_Decorations = function () {
         r_3 = Utils.sequence(roof_decoration, 17, 0.43+0.65, Y);
         r_4 = Utils.sequence(side_roof_decoration, 40, 0.43+0.65,X);
         r_5 = Utils.sequence(back_roof_decoration, 27, 0.43+0.65,Y);
+        single_front = T([Y])([10.73])(roof_decoration);
+
 
     }
     else {
@@ -647,6 +650,7 @@ var Roof_Decorations = function () {
         r_3 = Utils.sequence(roof_placeholder_stake, 17, 0.43+0.65, Y);
         r_4 = Utils.sequence(side_roof_placeholder_stake, 40, 0.43+0.65,X);
         r_5 = Utils.sequence(back_roof_placeholder_stake, 27, 0.43+0.65,Y);
+        single_front = T([Y])([10.73])(roof_placeholder_decoration);
 
     }
 
@@ -661,7 +665,7 @@ var Roof_Decorations = function () {
         r_5
     ]);
 
-    return STRUCT([half_roof_decorations, T([Y])([2*(STEP_WIDTH/2 + HANDRAIL_WIDTH + 5.7)]), S([Y])([-1]), half_roof_decorations]).color(Colors.yellow_decoration);
+    return STRUCT([single_front, half_roof_decorations, T([Y])([2*(STEP_WIDTH/2 + HANDRAIL_WIDTH + 5.7)]), S([Y])([-1]), half_roof_decorations]).color(Colors.yellow_decoration);
 };
 
 var UPPER_ROOF_CURBE_DEPTH = WALL_DEPTH+0.83;
